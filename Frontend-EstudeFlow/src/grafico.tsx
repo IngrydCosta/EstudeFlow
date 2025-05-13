@@ -1,56 +1,52 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
 
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const Grafico = () => {
 
-  const [dados, setDados] = useState<number[]>([]);
-
-
-  const valoresGrafico = useMemo(() => [12, 19, 3, 5, 2, 3, 7], []);
-
-  useEffect(() => {
-
-    setDados(valoresGrafico);
-  }, [valoresGrafico]);
-
+  const dados = {
+    pendentes: 8,
+    atrasadas: 4,
+    concluidas: 15
+  };
 
   const options = {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top' as const,
+        position: 'top' as const
       },
       title: {
         display: true,
-        text: 'Gráfico de Exemplo',
-      },
-    },
+        text: 'Status das Tarefas'
+      }
+    }
   };
 
-
   const data = {
-    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul'], 
+    labels: ['Pendentes', 'Atrasadas', 'Concluídas'],
     datasets: [
       {
-        label: 'Dados de Vendas',
-        data: dados,  
-        borderColor: 'rgb(75, 192, 192)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        fill: true,
-      },
-    ],
+        label: 'Quantidade',
+        data: [dados.pendentes, dados.atrasadas, dados.concluidas],
+        backgroundColor: ['#4A37C8', '#8879EB', '#EDEBFF']
+      }
+    ]
   };
 
   return (
-    <div className="grafico-container p-4 bg-white shadow-md rounded-md">
-      <h2 className="text-2xl font-semibold mb-4">Desempenho das Vendas</h2>
-      <div className="grafico">
-        <Line data={data} options={options} />
-      </div>
+    <div className="grafico-container p-14 bg-white shadow-md rounded-md w-full max-w-lg mx-auto mt-1" >
+      <h2 className="text-2xl font-semibold mb-4 text-center">Seu Progresso</h2>
+      <Bar data={data} options={options} />
     </div>
   );
 };

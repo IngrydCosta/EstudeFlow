@@ -1,8 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import logoIcon from './assets/icon.svg';
-import userIcon from './assets/user.svg';
-import lockIcon from './assets/lock.svg';
 import './style.css';
 
 
@@ -20,13 +17,13 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-[#EDEBFF] font-[Poppins]">
       <div className="bg-[#6755A711] w-[500px] h-[700px] p-20 rounded-2xl shadow-md text-center">
         <div className="flex items-center mb-10 justify-center">
-          <img src={logoIcon} alt="Logo" className="w-[85px]" />
+          <img src="assets/icon.svg" alt="Logo" className="w-[85px]" />
           <p className="text-[40px]  right-px">Estude<strong>Flow</strong></p>
         </div>
         <h1 className="  text-[#6755A7] text-[30px] mb-5 justify-center"><strong>Login</strong></h1>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="input flex items-center border-b border-[#6755A780] py-2">
-            <img src={userIcon} alt="user" className="w-5 h-6 mr-2" />
+            <img src= "assets/user.svg" alt="user" className="w-5 h-6 mr-2" />
             <input
               type="text"
               placeholder="USUÁRIO"
@@ -38,7 +35,7 @@ export default function Login() {
           </div>
 
           <div className="input flex items-center border-b border-[#6755A780] py-2">
-            <img src={lockIcon} alt="lock" className="w-5 h-6 mr-2" />
+            <img src="assets/lock.svg" alt="lock" className="w-5 h-6 mr-2" />
             <input
               type="password"
               placeholder="SENHA"

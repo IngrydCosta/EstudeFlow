@@ -1,62 +1,67 @@
 import { useEffect, useState, useMemo } from "react";
 
-
 const Calendario = () => {
-
-    const hoje = useMemo(() => new Date(), []);
-
-    const [dias, setDias] = useState<number[]>([]);
-
-    const diaEntrega = 28;
-
-    useEffect(() => {
-        const calcularDias = () => {
-            const diasNoMes: number[] = [];
-            const mes = hoje.getMonth();
-            const ano = hoje.getFullYear();
+  const hoje = useMemo(() => new Date(), []);
+  const [dias, setDias] = useState<number[]>([]);
 
 
-            const ultimoDiaDoMes = new Date(ano, mes + 1, 0).getDate();
+  const tarefaId = "T1";
+  const dataEntrega = new Date(hoje.getFullYear(), hoje.getMonth(), 28); 
+  const diasRestantes = Math.ceil((dataEntrega.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));
 
-            for (let i = 1; i <= ultimoDiaDoMes; i++) {
-                diasNoMes.push(i);
-            }
+  useEffect(() => {
+    const calcularDias = () => {
+      const diasNoMes: number[] = [];
+      const mes = hoje.getMonth();
+      const ano = hoje.getFullYear();
+      const ultimoDiaDoMes = new Date(ano, mes + 1, 0).getDate();
 
-            setDias(diasNoMes);
-        };
+      for (let i = 1; i <= ultimoDiaDoMes; i++) {
+        diasNoMes.push(i);
+      }
 
-        calcularDias();
-    }, [hoje]);
+      setDias(diasNoMes);
+    };
 
+    calcularDias();
+  }, [hoje]);
 
-    return (
-        <div className="bg-white p-4 rounded-lg shadow-md w-full max-w-lg mx-auto">
-            <h2 className="text-lg font-semibold mb-4">Calendário</h2>
-            <div className="grid grid-cols-7 gap-2">
-                {dias.map((dia) => {
-                    const isHoje = dia === hoje.getDate();
-                    const isEntrega = dia === diaEntrega;
+  return (
+    <div className="flex flex-col lg:flex-row gap-6 p-6 bg-white shadow-md rounded-[10px] overflow-hidden">
+      <div className="text-center mb-10">
+      <h2 className="text-xl font-bold text-[#6755A7]">Calendário</h2>
 
-                    let estilo =
-                        "w-10 h-10 flex items-center justify-center rounded-full text-sm";
+      <div className=" items-center text-gray-800 mt-20">
+        <p><strong>ID da Tarefa:</strong> {tarefaId}</p>
+        <p><strong>Faltam:</strong> {diasRestantes} dias para entrega</p>
+        <p><strong>Data de Entrega:</strong> {dataEntrega.toLocaleDateString()}</p>
+      </div>
+      </div>
+  
+      <div className="grid grid-cols-7 gap-2">
+        {dias.map((dia) => {
+          const isHoje = dia === hoje.getDate();
+          const isEntrega = dia === dataEntrega.getDate();
 
-                    if (isHoje) {
-                        estilo += " bg-blue-500 text-white font-bold";
-                    } else if (isEntrega) {
-                        estilo += " bg-yellow-400 text-black font-bold";
-                    } else {
-                        estilo += " bg-gray-100 text-gray-800";
-                    }
+          let estilo = "w-10 h-12 flex items-center justify-center rounded-full text-sm";
 
-                    return (
-                        <div key={dia} className={estilo}>
-                            {dia}
-                        </div>
-                    );
-                })}
+          if (isHoje) {
+            estilo += " bg-[#6755A7] text-white font-bold";
+          } else if (isEntrega) {
+            estilo += " bg-[#EEEAF9] text-black font-bold";
+          } else {
+            estilo += " bg-gray-100 text-gray-800";
+          }
+
+          return (
+            <div key={dia} className={estilo}>
+              {dia}
             </div>
-        </div>
-    );
+          );
+        })}
+      </div>
+    </div>
+  );
 };
 
 export default Calendario;
