@@ -1,29 +1,17 @@
 import { useState } from "react";
+import { Tarefa, UnidadeCurricular } from './types';
 
-interface UnidadeCurricular {
-  id: string;
-  nome: string;
+
+interface AtividadesProps {
+  tarefas: Tarefa[];
+  onTarefasChange: (tarefas: Tarefa[]) => void;
 }
 
-interface Tarefa {
-  id: number;
-  nome: string;
-  dataEntrega: string;
-  status: string;
-  unidadeId: string;
-}
-
-const Atividades = () => {
+const Atividades = ({ tarefas, onTarefasChange }: AtividadesProps) => {
   const [unidades] = useState<UnidadeCurricular[]>([
-    { id: "uc1", nome: "Matemática" },
-    { id: "uc2", nome: "História" },
-    { id: "uc3", nome: "Biologia" }
-  ]);
-
-  const [tarefas, setTarefas] = useState<Tarefa[]>([
-    { id: 1, nome: "Atividade 1", dataEntrega: "2025-04-25", status: "Pendente", unidadeId: "uc1" },
-    { id: 2, nome: "Atividade 2", dataEntrega: "2025-04-26", status: "Concluída", unidadeId: "uc2" },
-    { id: 3, nome: "Atividade 3", dataEntrega: "2025-04-27", status: "Atrasada", unidadeId: "uc1" },
+    { id: "uc1", nome: "Laboratório de Desenvolvimento de Software" },
+    { id: "uc2", nome: "Arquitetura de Computadores" },
+    { id: "uc3", nome: "Algoritmos e Estrutura de Dados" }
   ]);
 
   const [unidadeSelecionada, setUnidadeSelecionada] = useState<string>("");
@@ -37,20 +25,19 @@ const Atividades = () => {
   };
 
   const handleDelete = (id: number) => {
-    const confirmar = confirm("Deseja realmente excluir esta tarefa?");
-    if (confirmar) {
-      setTarefas(tarefas.filter(t => t.id !== id));
+    if (confirm("Deseja excluir esta tarefa?")) {
+      onTarefasChange(tarefas.filter(t => t.id !== id));
     }
   };
 
-  const handleStatusChange = (id: number, novoStatus: string) => {
-    setTarefas(tarefas.map(t =>
+  const handleStatusChange = (id: number, novoStatus: Tarefa['status']) => {
+    onTarefasChange(tarefas.map(t => 
       t.id === id ? { ...t, status: novoStatus } : t
     ));
   };
 
   return (
-    <section className="w-[1450px] h-[380px] bg-white rounded-2xl shadow-lg static top-8 left-[300px] p-6">
+    <section className="w-full max-w-[1500px] h-[410px] bg-white rounded-2xl shadow-lg relative top-5 mx-auto p-5">
       <h1 className="text-[#6755A7] text-2xl font-bold text-center mb-6">
         Suas Atividades
       </h1>
@@ -70,8 +57,8 @@ const Atividades = () => {
         </select>
       </div>
 
-      <table className="w-full border-2 border-[#6755A7] rounded-[10px] shadow-lg overflow-hidden">
-        <thead className="bg-[#6755A7] text-white">
+      <table className="w-full border-2 border-[#4A37C8] rounded-[10px] shadow-lg overflow-hidden">
+        <thead className="bg-[#4A37C8] text-white">
           <tr>
             <th className="text-center p-2">Tarefa</th>
             <th className="text-center p-2">Data de Entrega</th>
@@ -108,7 +95,7 @@ const Atividades = () => {
                   <select
                     className={`p-2 rounded-md ${selectBg}`}
                     value={tarefa.status}
-                    onChange={(e) => handleStatusChange(tarefa.id, e.target.value)}
+                    onChange={(e) => handleStatusChange(tarefa.id, e.target.value as "Pendente" | "Atrasada" | "Concluída")}
                   >
                     <option value="Pendente">Pendente</option>
                     <option value="Atrasada">Atrasada</option>

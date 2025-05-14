@@ -1,6 +1,10 @@
 import { useEffect, useState, useMemo } from "react";
+import { Tarefa } from './types';
 
-const Calendario = () => {
+interface CalendarioProps {
+  tarefas: Tarefa[];
+}
+  const Calendario = ({ tarefas }: CalendarioProps) => {
   const hoje = useMemo(() => new Date(), []);
   const [dias, setDias] = useState<number[]>([]);
 
@@ -27,26 +31,34 @@ const Calendario = () => {
   }, [hoje]);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 p-6 bg-white shadow-md rounded-[10px] overflow-hidden">
-      <div className="text-center mb-10">
-      <h2 className="text-xl font-bold text-[#6755A7]">Calendário</h2>
+    <div className="w-full md:w-[45%] h-auto md:h-[400px] flex flex-col items-center gap-2 p-1 bg-white shadow-md rounded-[15px] overflow-hidden">
+      <div className="text-center">
+      <h2 className="text-2xl font-bold text-[#6755A7] mb-4">Calendário</h2>
 
-      <div className=" items-center text-gray-800 mt-20">
+      <div className="  text-gray-800 flex flex-col mt-2 items-center">
         <p><strong>ID da Tarefa:</strong> {tarefaId}</p>
         <p><strong>Faltam:</strong> {diasRestantes} dias para entrega</p>
         <p><strong>Data de Entrega:</strong> {dataEntrega.toLocaleDateString()}</p>
       </div>
       </div>
-  
+
+      <div className="mt-4">
+      
+        <ul className="list-disc list-inside text-[#6755A7]">
+          {tarefas.map((tarefa, index) => (
+            <li key={index}>{tarefa.nome}</li>
+          ))}
+        </ul>
+      </div>
       <div className="grid grid-cols-7 gap-2">
         {dias.map((dia) => {
           const isHoje = dia === hoje.getDate();
           const isEntrega = dia === dataEntrega.getDate();
 
-          let estilo = "w-10 h-12 flex items-center justify-center rounded-full text-sm";
+          let estilo = "w-10 h-8 flex items-center justify-center rounded-full text-sm";
 
           if (isHoje) {
-            estilo += " bg-[#6755A7] text-white font-bold";
+            estilo += " bg-[#4A37C8] text-white font-bold";
           } else if (isEntrega) {
             estilo += " bg-[#EEEAF9] text-black font-bold";
           } else {
