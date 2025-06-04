@@ -4,14 +4,44 @@ import { Tarefa } from './types';
 interface CalendarioProps {
   tarefas: Tarefa[];
 }
-  const Calendario = ({ tarefas }: CalendarioProps) => {
+
+const Calendario = ({ tarefas }: CalendarioProps) => {
   const hoje = useMemo(() => new Date(), []);
   const [dias, setDias] = useState<number[]>([]);
 
+  const parseData = (dataStr: string): Date => {
+    if (!dataStr) return new Date(); 
 
-  const tarefaId = "T1";
-  const dataEntrega = new Date(hoje.getFullYear(), hoje.getMonth(), 28); 
-  const diasRestantes = Math.ceil((dataEntrega.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));
+    if (dataStr.includes('-')) {
+      const [ano, mes, dia] = dataStr.split('-').map(Number);
+      return new Date(ano, mes - 1, dia); 
+    }
+
+   
+    const [dia, mes, ano] = dataStr.split('/').map(Number);
+    return new Date(ano, mes - 1, dia);
+  };
+
+ 
+  const tarefasNaoConcluidas = useMemo(() => {
+    return tarefas.filter(tarefa => tarefa.status !== "Concluída");
+  }, [tarefas]);
+
+  const tarefaMaisProxima = useMemo(() => {
+    if (!tarefasNaoConcluidas.length) return null;
+
+    return tarefasNaoConcluidas.reduce((maisProxima, tarefa) => {
+      const dataEntrega = parseData(tarefa.dataEntrega);
+      if (isNaN(dataEntrega.getTime()) || dataEntrega < hoje) return maisProxima; 
+
+      if (!maisProxima) {
+        return { ...tarefa, dataEntregaDate: dataEntrega };
+      }
+
+      const dataMaisProxima = parseData(maisProxima.dataEntrega);
+      return dataEntrega < dataMaisProxima ? { ...tarefa, dataEntregaDate: dataEntrega } : maisProxima;
+    }, null as (Tarefa & { dataEntregaDate: Date }) | null);
+  }, [tarefasNaoConcluidas, hoje]);
 
   useEffect(() => {
     const calcularDias = () => {
@@ -31,31 +61,36 @@ interface CalendarioProps {
   }, [hoje]);
 
   return (
-    <div className="w-full md:w-[45%] h-auto md:h-[400px] flex flex-col items-center gap-2 p-1 bg-white shadow-md rounded-[15px] overflow-hidden">
+  
+    <div className="w-full h-full flex flex-col items-center gap-4 p-4 bg-white shadow-md rounded-[15px] overflow-auto">  
       <div className="text-center">
-      <h2 className="text-2xl font-bold text-[#6755A7] mb-4">Calendário</h2>
+        <h2 className="text-2xl font-bold text-[#6755A7] mb-2">Calendário</h2> 
 
-      <div className="  text-gray-800 flex flex-col mt-2 items-center">
-        <p><strong>ID da Tarefa:</strong> {tarefaId}</p>
-        <p><strong>Faltam:</strong> {diasRestantes} dias para entrega</p>
-        <p><strong>Data de Entrega:</strong> {dataEntrega.toLocaleDateString()}</p>
+        <div className="text-gray-800 flex flex-col mt-1 items-center text-sm"> 
+          {tarefaMaisProxima ? (
+            <>
+              <p><strong>ID da Tarefa:</strong> T{tarefaMaisProxima.id}</p>
+              <p><strong>Faltam:</strong> {Math.ceil((tarefaMaisProxima.dataEntregaDate.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24))} dias</p>
+              <p><strong>Entrega:</strong> {tarefaMaisProxima.dataEntrega}</p>
+            </>
+          ) : (
+            <p>Nenhuma tarefa futura.</p>
+          )}
+        </div>
       </div>
-      </div>
-
-      <div className="mt-4">
-      
-        <ul className="list-disc list-inside text-[#6755A7]">
-          {tarefas.map((tarefa, index) => (
+      <div className="w-full px-2"> 
+        <ul className="list-disc list-inside text-[#6755A7] text-sm"> 
+          {tarefasNaoConcluidas.map((tarefa, index) => (
             <li key={index}>{tarefa.nome}</li>
           ))}
         </ul>
       </div>
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-1 w-full px-2"> 
         {dias.map((dia) => {
           const isHoje = dia === hoje.getDate();
-          const isEntrega = dia === dataEntrega.getDate();
+          const isEntrega = tarefaMaisProxima && parseData(tarefaMaisProxima.dataEntrega).getDate() === dia && parseData(tarefaMaisProxima.dataEntrega).getMonth() === hoje.getMonth();
 
-          let estilo = "w-10 h-8 flex items-center justify-center rounded-full text-sm";
+          let estilo = "w-10 h-10 flex items-center justify-center rounded-full text-xs"; 
 
           if (isHoje) {
             estilo += " bg-[#4A37C8] text-white font-bold";
@@ -77,3 +112,4 @@ interface CalendarioProps {
 };
 
 export default Calendario;
+

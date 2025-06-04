@@ -8,11 +8,9 @@ import {
   Title,
   Tooltip,
   Legend,
-  
 } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
 
 type GraficoProps = {
   tarefas: Tarefa[];
@@ -27,7 +25,9 @@ const Grafico = ({ tarefas }: GraficoProps) => {
   };
 
   const options = {
+
     responsive: true,
+    maintainAspectRatio: false, 
     plugins: {
       legend: {
         position: 'top' as const
@@ -35,13 +35,21 @@ const Grafico = ({ tarefas }: GraficoProps) => {
       title: {
         display: true,
         text: 'Status das Tarefas'
-
+      }
+    },
+    scales: { 
+      y: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1
+        }
       }
     }
   };
 
   const data = {
-    labels: ['Pendentes', 'Atrasadas', 'Concluídas'],
+   
+    labels: ['Pendentes', 'Atrasadas', 'Concluídas'], 
     datasets: [
       {
         label: 'Quantidade',
@@ -52,13 +60,16 @@ const Grafico = ({ tarefas }: GraficoProps) => {
   };
 
   return (
-    <div className="w-full md:w-[49%] h-auto md:h-[400px] flex flex-col items-center bg-white shadow-md rounded-[15px] overflow-hidden p-8">
-           <div className="text-center"></div>
-      <h2 className="text-2xl font-bold text-[#6755A7] text-center">Seu Progresso</h2>
-      <Bar data={data} options={options} />
-    </div>
     
+    <div className="w-full h-full flex flex-col items-center bg-white shadow-md rounded-[15px] overflow-hidden p-4 gap-2"> 
+      <h2 className="text-xl font-bold text-[#6755A7] text-center">Seu Progresso</h2> 
+    
+      <div className="relative w-full h-full"> 
+        <Bar data={data} options={options} />
+      </div>
+    </div>
   );
 };
 
 export default Grafico;
+

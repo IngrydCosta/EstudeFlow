@@ -27,7 +27,11 @@ function App() {
           path="/dashboard" 
           element={
             isAuthenticated ? 
-              <Dashboard tarefas={tarefas} onTarefasChange={setTarefas} /> : 
+              <Dashboard 
+                tarefas={tarefas} 
+                onTarefasChange={setTarefas} 
+                onLogout={() => setIsAuthenticated(false)} 
+              /> : 
               <Navigate to="/" />
           } 
         />

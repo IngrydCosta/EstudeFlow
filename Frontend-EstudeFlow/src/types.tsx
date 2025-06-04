@@ -3,16 +3,12 @@ export interface Tarefa {
   nome: string;
   dataEntrega: string;
   status: "Pendente" | "Atrasada" | "Concluída";
-  unidadeId: string;
-}
-
-export interface UnidadeCurricular {
-  id: string;
-  nome: string;
+  unidadeId: string; 
 }
 
 export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (tarefa: Omit<Tarefa, 'id' | 'status'>) => void;
+  tarefaEditando?: Tarefa | null;
 }

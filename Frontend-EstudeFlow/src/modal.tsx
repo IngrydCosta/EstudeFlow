@@ -1,28 +1,70 @@
 import ReactDOM from "react-dom";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Tarefa } from './types';
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (tarefa: { nome: string; dataEntrega: string; unidadeId: string }) => void;
+  onSave: (tarefa: Omit<Tarefa, 'id' | 'status'>) => void;
+  tarefaEditando?: Tarefa | null;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, tarefaEditando }) => {
   const [unidadeCurricular, setUnidadeCurricular] = useState('');
   const [tarefa, setTarefa] = useState('');
   const [dataEntrega, setDataEntrega] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave({
-      nome: tarefa,
-      dataEntrega,
-      unidadeId: unidadeCurricular
-    });
-    // Reset do formulário
-    setUnidadeCurricular('');
+  // Essa função formata a data de YYYY-MM-DD para DD/MM/YYYY
+  const formatarData = (data: string): string => {
+    if (!data) return '';
+    const [ano, mes, dia] = data.split('-');
+    return `${dia}/${mes}/${ano}`;
+  };
+
+  // Essa função converte  DD/MM/YYYY para YYYY-MM-DD (para o input)
+  const desformatarData = (data: string): string => {
+    if (!data) return '';
+    const [dia, mes, ano] = data.split('/').map(Number);
+    return `${ano}-${mes.toString().padStart(2, '0')}-${dia.toString().padStart(2, '0')}`;
+  };
+
+  useEffect(() => {
+    // Limpa os campos ao abrir o modal
     setTarefa('');
     setDataEntrega('');
+    setUnidadeCurricular('');
+
+    // Preenche os campos apenas se for edição
+    if (isOpen && tarefaEditando) {
+      setTarefa(tarefaEditando.nome);
+      setDataEntrega(desformatarData(tarefaEditando.dataEntrega));
+      setUnidadeCurricular(tarefaEditando.unidadeId);
+    }
+  }, [isOpen, tarefaEditando]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!unidadeCurricular || !tarefa || !dataEntrega) {
+      alert("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+    onSave({
+      nome: tarefa,
+      dataEntrega: formatarData(dataEntrega), // Formata para DD/MM/YYYY
+      unidadeId: unidadeCurricular,
+    });
+    // Limpa os campos após salvar
+    setTarefa('');
+    setDataEntrega('');
+    setUnidadeCurricular('');
+    onClose();
+  };
+
+  const handleClose = () => {
+    setTarefa('');
+    setDataEntrega('');
+    setUnidadeCurricular('');
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -30,14 +72,14 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
   return ReactDOM.createPortal(
     <div 
       className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <div 
         className="bg-white w-full max-w-md rounded-lg p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-xl font-bold text-center mb-4 text-[#6755A7]">
-          Cadastro de Tarefas
+          {tarefaEditando ? "Editar Tarefa" : "Cadastro de Tarefas"}
         </h2>
 
         <form onSubmit={handleSubmit}>
@@ -85,7 +127,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
           <div className="flex justify-between mt-6">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               className="bg-purple-700 text-white px-6 py-2 rounded-lg hover:bg-purple-600 focus:outline-none"
             >
               Cancelar

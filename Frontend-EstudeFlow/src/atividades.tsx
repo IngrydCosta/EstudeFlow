@@ -1,27 +1,27 @@
 import { useState } from "react";
-import { Tarefa, UnidadeCurricular } from './types';
-
+import { Tarefa } from './types';
 
 interface AtividadesProps {
   tarefas: Tarefa[];
   onTarefasChange: (tarefas: Tarefa[]) => void;
+  onEditTarefa: (tarefa: Tarefa) => void;
 }
 
-const Atividades = ({ tarefas, onTarefasChange }: AtividadesProps) => {
-  const [unidades] = useState<UnidadeCurricular[]>([
-    { id: "uc1", nome: "Laboratório de Desenvolvimento de Software" },
-    { id: "uc2", nome: "Arquitetura de Computadores" },
-    { id: "uc3", nome: "Algoritmos e Estrutura de Dados" }
-  ]);
-
+const Atividades = ({ tarefas, onTarefasChange, onEditTarefa }: AtividadesProps) => {
   const [unidadeSelecionada, setUnidadeSelecionada] = useState<string>("");
+
+  
+  const unidadesUnicas = Array.from(new Set(tarefas.map(t => t.unidadeId)));
 
   const tarefasFiltradas = unidadeSelecionada
     ? tarefas.filter(t => t.unidadeId === unidadeSelecionada)
     : tarefas;
 
   const handleEdit = (id: number) => {
-    alert(`Editar tarefa com ID ${id} (abrir modal futuramente)`);
+    const tarefa = tarefas.find(t => t.id === id);
+    if (tarefa) {
+      onEditTarefa(tarefa);
+    }
   };
 
   const handleDelete = (id: number) => {
@@ -37,7 +37,7 @@ const Atividades = ({ tarefas, onTarefasChange }: AtividadesProps) => {
   };
 
   return (
-    <section className="w-full max-w-[1500px] h-[410px] bg-white rounded-2xl shadow-lg relative top-5 mx-auto p-5">
+    <section className="w-full max-w-[1550px] h-[410px] bg-white rounded-2xl shadow-lg relative top-4 mx-auto p-5">
       <h1 className="text-[#6755A7] text-2xl font-bold text-center mb-6">
         Suas Atividades
       </h1>
@@ -49,9 +49,9 @@ const Atividades = ({ tarefas, onTarefasChange }: AtividadesProps) => {
           onChange={(e) => setUnidadeSelecionada(e.target.value)}
         >
           <option value="">Selecione uma Unidade Curricular</option>
-          {unidades.map((uc) => (
-            <option key={uc.id} value={uc.id}>
-              {uc.nome}
+          {unidadesUnicas.map((unidade) => (
+            <option key={unidade} value={unidade}>
+              {unidade}
             </option>
           ))}
         </select>
