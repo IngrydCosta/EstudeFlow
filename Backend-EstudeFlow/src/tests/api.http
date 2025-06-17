@@ -1,0 +1,104 @@
+### Variáveis
+@baseUrl = http://localhost:3001/api
+@authToken = 
+
+### Teste da rota raiz
+GET http://localhost:3001/
+Content-Type: application/json
+
+### Registro de usuário
+POST {{baseUrl}}/auth/registrar
+Content-Type: application/json
+
+{
+  "nome": "Usuário Teste",
+  "email": "usuario@teste.com",
+  "senha": "123456"
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "usuario@teste.com",
+  "senha": "123456"
+}
+
+### Obter perfil do usuário
+GET {{baseUrl}}/usuarios/perfil
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+### Atualizar perfil do usuário
+PUT {{baseUrl}}/usuarios/perfil
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "nome": "Usuário Atualizado"
+}
+
+### Listar unidades
+GET {{baseUrl}}/unidades
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+### Criar unidade
+POST {{baseUrl}}/unidades
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "nome": "Física"
+}
+
+### Obter unidade específica
+GET {{baseUrl}}/unidades/uc1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+### Atualizar unidade
+PUT {{baseUrl}}/unidades/uc1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "nome": "Matemática Avançada"
+}
+
+### Listar tarefas
+GET {{baseUrl}}/tarefas
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+### Criar tarefa
+POST {{baseUrl}}/tarefas
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "nome": "Nova tarefa de teste",
+  "dataEntrega": "2025-06-30",
+  "unidadeId": "uc1"
+}
+
+### Obter tarefa específica
+GET {{baseUrl}}/tarefas/1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+### Atualizar tarefa
+PUT {{baseUrl}}/tarefas/1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "nome": "Tarefa atualizada",
+  "status": "Concluída"
+}
+
+### Excluir tarefa
+DELETE {{baseUrl}}/tarefas/1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
