@@ -34,10 +34,10 @@ model Tarefa {
   nome          String
   status        String @default("Pendente") //"pendente", "concluída", "atrasada"
   dataEntrega   DateTime 
-  unidade        Unidade? @relation(fields: [unidadeId], references: [id])
-  usuario       Usuario @relation(fields: [usuarioId], references: [id])
+  unidade       Unidade @relation(fields: [unidadeId], references: [id])
+  usuario       Usuario? @relation(fields: [usuarioId], references: [id])
   unidadeId      Int
-  usuarioId      Int
+  usuarioId      Int?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

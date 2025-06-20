@@ -1,5 +1,6 @@
 import { Router } from "express";
-import userRoutes from "../entities/user/user.routes";
+// Update the path below if your user.routes file is located elsewhere
+import userRoutes from "../routes/routes";
 
 const router = Router();
 
