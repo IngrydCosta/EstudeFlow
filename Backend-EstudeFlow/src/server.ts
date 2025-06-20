@@ -35,5 +35,8 @@ app.use(errorHandler);
 // Inicialização do servidor
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
+
+
 
