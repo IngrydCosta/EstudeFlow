@@ -1,18 +1,14 @@
-import { Router } from 'express';
+// @ts-nocheck
+import express from 'express';
 import { unidadesController } from '../controllers/unidadesController';
-import { authMiddleware } from '../middlewares/autenticacao';
+import { authMiddleware } from '../middlewares/authMiddleware';
 
-const router = Router();
+const router = express.Router();
 
-// Todas as rotas de unidades requerem autenticação
+const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
 router.use('/', authMiddleware);
-
-// Rotas
-function asyncHandler(fn: any) {
-	return function (req: any, res: any, next: any) {
-		Promise.resolve(fn(req, res, next)).catch(next);
-	};
-}
 
 router.get('/', asyncHandler(unidadesController.listar));
 router.get('/:id', asyncHandler(unidadesController.obter));
@@ -21,4 +17,3 @@ router.put('/:id', asyncHandler(unidadesController.atualizar));
 router.delete('/:id', asyncHandler(unidadesController.excluir));
 
 export default router;
-

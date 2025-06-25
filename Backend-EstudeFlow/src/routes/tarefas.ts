@@ -1,18 +1,19 @@
-import { Router } from 'express';
+import express from 'express';
 import { tarefasController } from '../controllers/tarefasController';
-import { authMiddleware } from '../middlewares/autenticacao';
+import { authMiddleware } from '../middlewares/authMiddleware';
 
-const router = Router();
+const router = express.Router();
 
-// Todas as rotas de tarefas requerem autenticação
-router.use('/', authMiddleware);
+const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
 
-// // Rotas
-router.get('/', tarefasController.listar);
-router.get('/:id', tarefasController.obter);
-router.post('/', tarefasController.criar);
-router.put('/:id', tarefasController.atualizar);
-router.delete('/:id', tarefasController.excluir);
+router.use(authMiddleware);
 
- export default router;
+router.get('/', asyncHandler(tarefasController.listar));
+router.get('/:id', asyncHandler(tarefasController.obter));
+router.post('/', asyncHandler(tarefasController.criar));
+router.put('/:id', asyncHandler(tarefasController.atualizar));
+router.delete('/:id', asyncHandler(tarefasController.excluir));
 
+export default router;

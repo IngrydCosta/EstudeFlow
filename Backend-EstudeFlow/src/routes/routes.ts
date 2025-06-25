@@ -1,9 +1,8 @@
 import { Router } from "express";
-// Update the path below if your user.routes file is located elsewhere
 import userRoutes from "../routes/routes";
 
-const router = Router();
+const router: Router = Router();
 
-router.use(userRoutes);
+router.use('/', userRoutes as Router);
 
 export default router;
