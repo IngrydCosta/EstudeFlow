@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import api from './services/api'; 
+import { AxiosError } from 'axios';
 import './style.css';
 
 interface LoginProps {
@@ -12,18 +14,30 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (usuario.trim() === '' || senha.trim() === '') {
       setErro('Por favor, preencha todos os campos');
       return;
     }
 
-    if (usuario.trim() !== '') { 
-  onLoginSuccess();
-  navigate('/dashboard');
-}
+    try {
+      // Requisição de login
+      const resposta = await api.post('/autenticacao/login', {
+        username: usuario,
+        senha: senha,
+      });
+
+      console.log('Login realizado:', resposta.data);
+
+      onLoginSuccess();
+      navigate('/dashboard');
+    } catch (err) {
+      const error = err as AxiosError<{ error: string }>;
+      console.error('Erro no login:', error);
+      setErro(error.response?.data?.error || 'Erro ao fazer login');
+    }
   };
 
   return (
@@ -35,11 +49,11 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
             Estude<strong>Flow</strong>
           </p>
         </div>
-        
+
         <h1 className="text-[#6755A7] text-[30px] mb-5 justify-center">
           <strong>Login</strong>
         </h1>
-        
+
         {erro && (
           <div className="mb-4 p-2 bg-red-100 text-red-700 rounded-md text-sm">
             {erro}
