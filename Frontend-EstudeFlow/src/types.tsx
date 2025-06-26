@@ -5,8 +5,11 @@ export interface Tarefa {
   status: "Pendente" | "Atrasada" | "Concluída";
   unidadeId: string; 
 }
-
-export interface ModalProps {
+ export interface Unidade {
+  id: string;
+  nome: string;
+ }
+ export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (tarefa: Omit<Tarefa, 'id' | 'status'>) => void;

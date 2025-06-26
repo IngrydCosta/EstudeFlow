@@ -6,6 +6,7 @@ import Grafico from './grafico';
 import { Tarefa } from './types';
 import Modal from './modal';
 
+
 interface DashboardProps {
   tarefas: Tarefa[];
   onTarefasChange: (tarefas: Tarefa[]) => void;
